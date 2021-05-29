@@ -64,7 +64,7 @@ export const constantRoutes = [
             {
                 path: "index",
                 name: "Search",
-                component: () => import("@/views/dashboard/index"),
+                component: () => import("@/views/search/index"),
                 meta: { title: "Search", icon: "el-icon-search" }
             }
         ]
