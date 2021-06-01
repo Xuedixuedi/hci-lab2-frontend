@@ -19,7 +19,7 @@
                     :key="index"
                     :offset="2"
                 >
-                    <el-card>
+                    <el-card v-if="o.visible">
                         <img
                             :src="o.imgUrl"
                             class="image"
@@ -29,7 +29,11 @@
                         <div style="padding: 14px;">
                             <span>{{ o.tag }}</span>
                             <div class="bottom clearfix">
-                                <el-button type="text" class="button">
+                                <el-button
+                                    type="text"
+                                    class="button"
+                                    @click="like()"
+                                >
                                     Like
                                 </el-button>
                             </div>
@@ -40,13 +44,15 @@
             <div>
                 <el-select v-model="tag" placeholder="choose tag">
                     <el-option
-                        v-for="item in tagList"
+                        v-for="item in this.tagList"
                         :key="item"
                         :label="item"
                         :value="item"
                     >
                     </el-option>
                 </el-select>
+                <el-button @click="tagFilter()">Filter</el-button>
+                <el-button @click="showAll()">Show All</el-button>
             </div>
         </div>
     </div>
@@ -69,7 +75,7 @@ export default {
             picTagList: [], //与pic对应关系
             tagList: [],
             likeList: [],
-            picPathList: [],
+            picPathList: [], //一个很长的对象数组，记录了名字，tag，like
             tag: "" //筛选的tag
         }
     },
@@ -78,76 +84,83 @@ export default {
             return new Promise(resolve => setTimeout(resolve, d))
         },
         httpRequest(item) {
-            console.log(item.file)
             this.file = item.file
         },
         setPath() {
             this.picPathList = []
 
-            console.log(this.picPathList)
             this.picPathList = [
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[0]),
                     name: this.picList[0],
                     tag: this.picTagList[0].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[1]),
                     name: this.picList[1],
                     tag: this.picTagList[1].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[2]),
                     name: this.picList[2],
                     tag: this.picTagList[2].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[3]),
                     name: this.picList[3],
                     tag: this.picTagList[3].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[4]),
                     name: this.picList[4],
                     tag: this.picTagList[4].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[5]),
                     name: this.picList[5],
                     tag: this.picTagList[5].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[6]),
                     name: this.picList[6],
                     tag: this.picTagList[6].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[7]),
                     name: this.picList[7],
                     tag: this.picTagList[7].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 },
                 {
                     imgUrl: require("@/../../lab2-image-retrieval/server/static" +
                         this.picList[8]),
                     name: this.picList[8],
                     tag: this.picTagList[8].split(".")[0],
-                    like: false
+                    like: false,
+                    visible: true
                 }
             ]
             console.log(this.picPathList)
@@ -170,27 +183,52 @@ export default {
             this.tagList = res.data.tagList
 
             this.picList.push(res.data.image0[0])
-            this.picTagList.push(res.data.image0[1])
+            this.picTagList.push(res.data.image0[1].split(".")[0])
             this.picList.push(res.data.image1[0])
-            this.picTagList.push(res.data.image1[1])
+            this.picTagList.push(res.data.image1[1].split(".")[0])
             this.picList.push(res.data.image2[0])
-            this.picTagList.push(res.data.image2[1])
+            this.picTagList.push(res.data.image2[1].split(".")[0])
             this.picList.push(res.data.image3[0])
-            this.picTagList.push(res.data.image3[1])
+            this.picTagList.push(res.data.image3[1].split(".")[0])
             this.picList.push(res.data.image4[0])
-            this.picTagList.push(res.data.image4[1])
+            this.picTagList.push(res.data.image4[1].split(".")[0])
             this.picList.push(res.data.image5[0])
-            this.picTagList.push(res.data.image5[1])
+            this.picTagList.push(res.data.image5[1].split(".")[0])
             this.picList.push(res.data.image6[0])
-            this.picTagList.push(res.data.image6[1])
+            this.picTagList.push(res.data.image6[1].split(".")[0])
             this.picList.push(res.data.image7[0])
-            this.picTagList.push(res.data.image7[1])
+            this.picTagList.push(res.data.image7[1].split(".")[0])
             this.picList.push(res.data.image8[0])
-            this.picTagList.push(res.data.image8[1])
+            this.picTagList.push(res.data.image8[1].split(".")[0])
+
+            //遍历taglist 把后缀去掉
+            for (var i in this.tagList) {
+                this.tagList[i] = this.tagList[i].split(".")[0]
+            }
 
             await this.sleep(1800)
 
             this.setPath()
+        },
+        isNowTag(item) {
+            console.log("item:", item)
+            return item.tag == this.tag
+        },
+        //按照tag筛选
+        tagFilter() {
+            for (var item in this.picPathList) {
+                console.log("item:", this.picPathList[item])
+                if (this.isNowTag(this.picPathList[item])) {
+                    this.picPathList[item].visible = true
+                } else {
+                    this.picPathList[item].visible = false
+                }
+            }
+        },
+        showAll() {
+            for (var i in this.picPathList) {
+                this.picPathList[i].visible = true
+            }
         }
     }
 }
