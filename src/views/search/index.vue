@@ -1,16 +1,21 @@
 <template>
     <div class="dashboard-container">
         <div class="dashboard-text">Picture Search!</div>
-        <el-upload
-            class="avatar-uploader"
-            action="111"
-            :show-file-list="false"
-            :http-request="httpRequest"
-        >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-        <el-button @click="search()">Test</el-button>
+        <div class="upload">
+            <el-upload
+                class="avatar-uploader"
+                action="111"
+                :show-file-list="false"
+                :http-request="httpRequest"
+                drag="true"
+            >
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <el-button @click="search()" class="upload-button"
+                >Upload</el-button
+            >
+        </div>
         <div>
             <el-row>
                 <el-col
@@ -18,6 +23,7 @@
                     v-for="(o, index) in this.picPathList"
                     :key="index"
                     :offset="2"
+                    class="pic-set"
                 >
                     <el-card v-if="o.visible">
                         <img
@@ -32,26 +38,29 @@
                                 <el-button
                                     type="text"
                                     class="button"
-                                    @click="like()"
+                                    @click="like(o)"
                                 >
-                                    Like
+                                    ❤️
                                 </el-button>
                             </div>
                         </div>
                     </el-card>
                 </el-col>
             </el-row>
-            <div>
-                <el-select v-model="tag" placeholder="choose tag">
-                    <el-option
-                        v-for="item in this.tagList"
-                        :key="item"
-                        :label="item"
-                        :value="item"
-                    >
-                    </el-option>
-                </el-select>
-                <el-button @click="tagFilter()">Filter</el-button>
+            <div class="button-group">
+                <div class="filter-group">
+                    <el-select v-model="tag" placeholder="choose tag">
+                        <el-option
+                            v-for="item in this.tagList"
+                            :key="item"
+                            :label="item"
+                            :value="item"
+                        >
+                        </el-option>
+                    </el-select>
+                    <el-button @click="tagFilter()">Filter</el-button>
+                </div>
+                <el-button @click="likeFilter()">Like Only</el-button>
                 <el-button @click="showAll()">Show All</el-button>
             </div>
         </div>
@@ -229,6 +238,20 @@ export default {
             for (var i in this.picPathList) {
                 this.picPathList[i].visible = true
             }
+        },
+        like(item) {
+            item.like = true
+            console.log(item.tag)
+        },
+        //按照like筛选
+        likeFilter() {
+            for (var i in this.picPathList) {
+                if (this.picPathList[i].like) {
+                    this.picPathList[i].visible = true
+                } else {
+                    this.picPathList[i].visible = false
+                }
+            }
         }
     }
 }
@@ -295,5 +318,33 @@ export default {
 
 .clearfix:after {
     clear: both;
+}
+
+.upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 100px;
+}
+
+.upload-button {
+    height: 40px;
+    margin-left: 40px;
+}
+
+.pic-set {
+    margin-bottom: 50px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    margin: 100px;
+}
+
+.filter-group {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
 }
 </style>
